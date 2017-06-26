@@ -1,0 +1,22 @@
+{
+  "name": "dayta",
+  "version": "0.0.1",
+  "description": "Dayta client - enter small bits of data easily",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Erik Hesselink",
+  "license": "ISC",
+  "dependencies": {
+    "@types/react": "^15.0.31",
+    "react": "^15.6.1",
+    "typescript": "^2.3.4"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.1.3",
+    "html-webpack-plugin": "^2.29.0",
+    "source-map-loader": "^0.2.1",
+    "webpack": "^3.0.0"
+  }
+}
