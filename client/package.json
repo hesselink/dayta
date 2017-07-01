@@ -10,8 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "@types/react": "^15.0.31",
+    "@types/react-dom": "^15.5.1",
+    "@types/react-router-dom": "^4.0.5",
     "react": "^15.6.1",
-    "typescript": "^2.3.4"
+    "react-dom": "^15.6.1",
+    "react-router-dom": "^4.1.1",
+    "typescript": "^2.3.4",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.1.3",

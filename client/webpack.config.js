@@ -5,9 +5,11 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 module.exports = {
   devtool: "source-map",
   entry: "./src/index.tsx",
+  /*
   externals: {
     "react": "React"
   },
+  */
   module: {
     loaders: [
       {
@@ -28,7 +30,10 @@ module.exports = {
   },
   plugins: [
     new CheckerPlugin(),
-    new HtmlWebpackPlugin()
+    new HtmlWebpackPlugin(
+      { title: "Dayta"
+      }
+    )
   ],
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"]
