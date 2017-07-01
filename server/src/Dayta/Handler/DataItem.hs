@@ -14,11 +14,11 @@ import qualified Dayta.Server.State as State
 import Debug.Trace
 
 list :: Text -> Text -> Dayta [DataItem]
-list username dataset =
+list _username dataset =
   fromMaybe [] . Map.lookup dataset . traceShowId <$> getDatasets
 
 create :: Text -> Text -> DataItem -> Dayta ()
-create username dataset dataitem = traceShow dataitem $
+create _username dataset dataitem = traceShow dataitem $
   modifyDatasets (Map.insertWith (++) dataset [dataitem])
 
 getDatasets :: Dayta (Map Text [DataItem])
