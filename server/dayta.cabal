@@ -28,6 +28,7 @@ library
                      , stm
                      , text
                      , time
+                     , wai-app-static
   default-language:    Haskell2010
 
 executable dayta-exe

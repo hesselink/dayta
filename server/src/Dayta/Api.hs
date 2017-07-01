@@ -1,5 +1,5 @@
 {-# LANGUAGE DataKinds, TypeOperators #-}
-module Dayta.Api (Api) where
+module Dayta.Api (Api, Api') where
 
 import Data.Text (Text)
 import Servant.API
@@ -12,3 +12,7 @@ import Dayta.Types.DataItem (DataItem)
 type Api = "user" :> Capture "username" Text
              :> "dataset" :> Capture "dataset" Text
                :> "item" :> (Get '[JSON] [DataItem] :<|> ReqBody '[JSON] DataItem  :> Post '[JSON] ())
+
+type Api' =  "api" :> Api
+        :<|> "static" :> Raw
+        :<|> Raw

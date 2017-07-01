@@ -6,7 +6,7 @@ import qualified Servant
 import qualified Network.Wai as Wai
 import qualified Network.Wai.Handler.Warp as Warp
 
-import Dayta.Api (Api)
+import Dayta.Api (Api')
 import Dayta.Server (server)
 import qualified Dayta.Server.State as Dayta
 
@@ -16,4 +16,4 @@ main = do
   Warp.run 8080 (app st)
 
 app :: Dayta.State -> Wai.Application
-app = Servant.serve (Proxy :: Proxy Api) . server
+app = Servant.serve (Proxy :: Proxy Api') . server
