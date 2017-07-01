@@ -2,7 +2,7 @@
 module Dayta.Types.Dayta (Dayta, daytaToHandler) where
 
 import Control.Monad.Reader (ReaderT, runReaderT, MonadReader, MonadIO)
-import Servant (Handler, (:~>)(Nat))
+import Servant (Handler, (:~>)(NT))
 
 import qualified Dayta.Server.State as Dayta
 
@@ -13,4 +13,4 @@ runDayta :: Dayta.State -> Dayta a -> Handler a
 runDayta st d = runReaderT (unDayta d) st
 
 daytaToHandler :: Dayta.State -> Dayta :~> Handler
-daytaToHandler st = Nat $ runDayta st
+daytaToHandler st = NT $ runDayta st
