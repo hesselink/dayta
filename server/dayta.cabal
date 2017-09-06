@@ -16,9 +16,11 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Dayta.Api
+                     , Dayta.Handler.DataItem
                      , Dayta.Server
                      , Dayta.Server.State
                      , Dayta.Types.DataItem
+                     , Dayta.Types.Dayta
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , containers
@@ -37,6 +39,7 @@ executable dayta-exe
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , dayta
+                     , servant-server
                      , wai
                      , warp
   default-language:    Haskell2010
