@@ -47,7 +47,7 @@ class DatasetContainer extends React.Component<RouteComponentProps<any>> {
       .then(response => response.json())
       .then(this.dataItemSaved.bind(this))
       .catch(this.dataItemSaveFailed.bind(this))
-    this.reloadData();
+      .then(this.reloadData.bind(this));
   }
 
   dataItemSaved (json : any) : void {
