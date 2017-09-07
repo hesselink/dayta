@@ -9,12 +9,13 @@ dependencies:
   override:
     - cd server && stack setup --no-terminal
     - cd server && stack build --no-system-ghc --only-configure --no-terminal
+    - cd client && npm install
+    - cd client && npm install -g webpack
 
 compile:
   override:
     - cd server && stack build --no-terminal
     - cd server && cp `stack path --local-install-root`/bin/dayta-exe $CIRCLE_ARTIFACTS
-    - cd client && npm install
     - cd client && webpack
     - cd client/dist && tar cfz $CIRCLE_ARTIFACTS/client.tar.gz ./*
 
