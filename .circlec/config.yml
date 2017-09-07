@@ -1,0 +1,19 @@
+dependencies:
+  cache_directories:
+    - "~/.stack"
+  pre:
+    - wget https://github.com/commercialhaskell/stack/releases/download/v1.5.1/stack-1.5.1-linux-x86_64.tar.gz -O /tmp/stack.tar.gz
+    - mkdir /tmp/stack/
+    - tar -xvzf /tmp/stack.tar.gz -C /tmp/stack/
+    - sudo mv /tmp/stack/stack-1.5.1-linux-x86_64/stack /usr/bin/stack
+  override:
+    - cd server && stack setup --no-terminal
+    - cd server && stack build --no-system-ghc --only-configure --no-terminal
+
+compile:
+  override:
+    - cd server && stack build --no-terminal
+
+test:
+  override:
+    - cd server && stack test --no-terminal
