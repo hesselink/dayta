@@ -1,15 +1,8 @@
-module Dayta.Server.State (State (datasets), emptyState) where
+module Dayta.Server.State (State (State, dbConnectionPool)) where
 
-import Control.Concurrent.STM (TVar, newTVarIO)
-import Control.Monad.Trans (MonadIO (liftIO))
-import Data.Map (Map)
-import Data.Text (Text)
-
-import Dayta.Types.DataItem (DataItem)
+import Data.Pool (Pool)
+import qualified Database.PostgreSQL.Simple as Db
 
 data State = State
-  { datasets :: TVar (Map Text [DataItem])
+  { dbConnectionPool :: Pool (Db.Connection)
   }
-
-emptyState :: MonadIO m => m State
-emptyState = liftIO $ State <$> newTVarIO mempty
