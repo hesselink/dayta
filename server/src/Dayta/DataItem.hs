@@ -3,13 +3,15 @@ module Dayta.DataItem (create, list) where
 
 import Data.Maybe (fromMaybe)
 
-import Dayta.Types.Dayta (Dayta, withConnection)
-import Dayta.Types.DataItem (DataItem (DataItem, datetime, value))
-import qualified Dayta.Db.DataItem as Db
-import qualified Opaleye as O
-import qualified Data.Aeson as Json
 import Data.Aeson ((.=))
+import qualified Data.Aeson as Json
 import qualified Data.HashMap.Lazy as Map
+import qualified Opaleye as O
+
+import Dayta.Types.DataItem (DataItem (DataItem, datetime, value))
+import Dayta.Types.Dayta (Dayta, withConnection)
+import qualified Dayta.Db.DataItem as Db
+
 
 toDb :: DataItem -> Db.DataItemColumnW
 toDb di = Db.DataItem

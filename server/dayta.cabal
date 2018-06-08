@@ -41,6 +41,7 @@ library
                      , transformers-base
                      , unordered-containers
                      , wai-app-static
+                     , yaml
   default-language:    Haskell2010
 
 executable dayta-exe
