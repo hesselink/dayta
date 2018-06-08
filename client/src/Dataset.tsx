@@ -25,8 +25,9 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
   constructor (props: DatasetProps) {
     console.log("Dataset constructor", props)
     super(props);
+    let now = new Date();
     this.state = {
-      date : new Date().toString(),
+      date : "" + now.getFullYear() + "-" + this.padZero((now.getMonth() + 1)) + "-" + this.padZero(now.getDate()),
       number : ""
     };
   }
@@ -47,7 +48,7 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
              </ul>
              <form onSubmit={ e => this.saveDataItem(e) }>
                <label>
-                 Date: <input type="date" className="date" value={ this.state.date.toString() } onChange={ e => this.dateInputChange(e) } />
+                 Date: <input type="date" className="date" value={ this.state.date } onChange={ e => this.dateInputChange(e) } />
                </label><br />
                <label>
                  Value: <input type="number" className="number" value={ this.state.number } onChange={ e => this.numberInputChange(e) } />
@@ -74,6 +75,13 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
     this.setState( {
       "number": val
     })
+  }
+
+  padZero (num: number) : string {
+    if (num < 10)
+      return "0" + num;
+    else
+      return "" + num;
   }
 
 /*
