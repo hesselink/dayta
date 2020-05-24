@@ -1,10 +1,10 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, TypeOperators, MultiParamTypeClasses, TypeFamilies, UndecidableInstances #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, TypeOperators, MultiParamTypeClasses, TypeFamilies, UndecidableInstances, RankNTypes #-}
 module Dayta.Types.Dayta (Dayta, daytaToHandler, withConnection) where
 
 import Control.Monad.Base (MonadBase)
 import Control.Monad.Reader (ReaderT, runReaderT, MonadReader, MonadIO, asks)
 import Control.Monad.Trans.Control (MonadBaseControl (..))
-import Servant (Handler, (:~>)(NT))
+import Servant (Handler)
 import Data.Pool (withResource)
 import qualified Database.PostgreSQL.Simple as Db
 
@@ -21,8 +21,8 @@ instance MonadBaseControl IO Dayta where
 runDayta :: Dayta.State -> Dayta a -> Handler a
 runDayta st d = runReaderT (unDayta d) st
 
-daytaToHandler :: Dayta.State -> Dayta :~> Handler
-daytaToHandler st = NT $ runDayta st
+daytaToHandler :: Dayta.State -> (forall x. Dayta x -> Handler x)
+daytaToHandler st = runDayta st
 
 withConnection :: (Db.Connection -> Dayta a) -> Dayta a
 withConnection act = do

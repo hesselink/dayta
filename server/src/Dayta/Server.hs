@@ -5,7 +5,6 @@ import Data.Text (Text)
 import Network.Wai.Application.Static (StaticSettings (ssLookupFile), defaultFileServerSettings)
 import WaiAppStatic.Types (unsafeToPiece)
 import Servant
-import Servant.Server (Server)
 
 import Dayta.Types.Dayta (Dayta, daytaToHandler)
 import Dayta.Api (Api, Api')
@@ -13,7 +12,7 @@ import qualified Dayta.Handler.DataItem as DataItem
 import qualified Dayta.Server.State as Dayta
 
 apiServer :: Dayta.State -> Server Api
-apiServer st = enter (daytaToHandler st) apiServer'
+apiServer st = hoistServer (Proxy :: Proxy Api) (daytaToHandler st) apiServer'
 
 apiServer' :: ServerT Api Dayta
 apiServer' username dataset
