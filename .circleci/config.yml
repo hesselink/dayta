@@ -11,6 +11,12 @@ jobs:
           keys:
             - circle-cache
       - run:
+          name: Install dependencies
+          command: cd client && npm install
+      - run:
+          name: Build client
+          command: cd client && npx webpack
+      - run:
           name: Resolve/Update Dependencies
           command: cd server && stack --no-terminal setup
       - run:
@@ -25,7 +31,11 @@ jobs:
           paths:
             - "~/.stack"
             - "server/.stack-work"
+            - "client/node_modules"
       - store_artifacts:
           # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
           path: ~/.local/bin/dayta-exe
           destination: dayta-exe
+      - store_artifacts:
+          path: client/dist/
+          destination: client
