@@ -10,16 +10,25 @@ module.exports = {
     "react": "React"
   },
   */
+  mode: "development",
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.tsx?$/,
-        loader: "awesome-typescript-loader"
+        use: [
+          {
+            loader: "awesome-typescript-loader"
+          }
+        ]
       },
       {
         enforce: "pre",
         test: /\.js$/,
-        loader: "source-map-loader"
+        use: [
+          {
+            loader: "source-map-loader"
+          }
+        ]
       }
     ]
   },
