@@ -11,19 +11,19 @@ jobs:
           keys:
             - circle-cache
       - run:
-          name: Install dependencies
+          name: Install Client Dependencies
           command: cd client && npm install
       - run:
-          name: Build client
+          name: Build Client
           command: cd client && npx webpack
       - run:
-          name: Resolve/Update Dependencies
+          name: Resolve/Update Server Dependencies
           command: cd server && stack --no-terminal setup
       - run:
-          name: Run tests
+          name: Run Server Tests
           command: cd server && stack --no-terminal test
       - run:
-          name: Install executable
+          name: Install Server Executable
           command: cd server && stack --no-terminal install
       - save_cache:
           name: Cache Dependencies
