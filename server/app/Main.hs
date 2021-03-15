@@ -12,11 +12,13 @@ import Dayta.Api (Api')
 import Dayta.Server (server)
 import qualified Dayta.Server.State as Dayta
 
+import qualified CmdLine as CmdLine
 import qualified Config as Config
 
 main :: IO ()
 main = do
-  cfg <- Config.get
+  cmdOpts <- CmdLine.getOpts
+  cfg <- Config.get (CmdLine.configFile cmdOpts)
   pool <- createPool (Db.connect (Config.dbConnectInfo cfg)) Db.close 1 10 100
   let st = Dayta.State
         { Dayta.dbConnectionPool = pool

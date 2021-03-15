@@ -32,9 +32,9 @@ data ConnectConfig = ConnectConfig
 instance FromJSON ConnectConfig
 instance FromJSON ParsedConfig
 
-get :: IO Config
-get = do
-  result <- Yaml.decodeFileEither "dayta.yaml"
+get :: FilePath -> IO Config
+get cfgFile = do
+  result <- Yaml.decodeFileEither cfgFile
   case result of
     Right config -> return (mergeWithDefault config)
     Left (Yaml.AesonException e) -> print e >> return defaultConfig
