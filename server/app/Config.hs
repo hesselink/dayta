@@ -13,10 +13,12 @@ import qualified Data.Yaml as Yaml
 
 data Config = Config
   { dbConnectInfo :: Db.ConnectInfo
+  , staticFileDir_ :: FilePath
   } deriving (Show, Generic)
 
 data ParsedConfig = ParsedConfig
   { dbConnection :: ConnectConfig
+  , staticFileDir :: Maybe FilePath
   } deriving (Show, Generic)
 
 data ConnectConfig = ConnectConfig
@@ -41,6 +43,7 @@ get = do
 mergeWithDefault :: ParsedConfig -> Config
 mergeWithDefault pc = Config
   { dbConnectInfo = dbConnectionMergeWithDefault (dbConnection pc)
+  , staticFileDir_ = fromMaybe (staticFileDir_ defaultConfig) (staticFileDir pc)
   }
 
 dbConnectionMergeWithDefault :: ConnectConfig -> Db.ConnectInfo
@@ -59,4 +62,5 @@ defaultConfig = Config
   { dbConnectInfo = Db.defaultConnectInfo
       { Db.connectDatabase = "dayta"
       }
+  , staticFileDir_ = "../client/dist"
   }

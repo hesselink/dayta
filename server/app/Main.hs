@@ -20,6 +20,7 @@ main = do
   pool <- createPool (Db.connect (Config.dbConnectInfo cfg)) Db.close 1 10 100
   let st = Dayta.State
         { Dayta.dbConnectionPool = pool
+        , Dayta.staticFileDir = Config.staticFileDir_ cfg
         }
   Warp.run 8080 (app st)
 

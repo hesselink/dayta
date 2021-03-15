@@ -22,8 +22,8 @@ apiServer' username dataset
 server :: Dayta.State -> Server Api'
 server st
    =  apiServer st
- :<|> serveDirectoryFileServer "../client/dist/static"
- :<|> serveSingleFile "../client/dist" "index.html"
+ :<|> serveDirectoryFileServer (Dayta.staticFileDir st ++ "/static")
+ :<|> serveSingleFile (Dayta.staticFileDir st) "index.html"
 
 serveSingleFile :: FilePath -> Text -> Server Raw
 serveSingleFile dir file = serveDirectoryWith defaults
