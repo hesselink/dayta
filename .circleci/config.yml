@@ -56,7 +56,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST "./scripts/deploy.sh $(cat workspace/build_num)"
+            ssh $SSH_USER@$SSH_HOST "./scripts/deploy.py $(cat workspace/build_num)"
 
 workflows:
   version: 2
