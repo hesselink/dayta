@@ -35,7 +35,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "static/app.js",
-    publicPath: "/"
+    publicPath: "./"
   },
   plugins: [
     new CheckerPlugin(),
