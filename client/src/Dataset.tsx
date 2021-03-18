@@ -44,7 +44,7 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
                    ) + " dataset " + name}
              </h3>
              <ul>
-             { data.map(item => <DataListItem key={item.datetime} data={item}/>) }
+             { data.map((item, ix) => <DataListItem key={ix} data={item}/>) }
              </ul>
              <form onSubmit={ e => this.saveDataItem(e) }>
                <label>
