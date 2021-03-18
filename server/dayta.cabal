@@ -21,8 +21,10 @@ library
                      , Dayta.Handler.DataItem
                      , Dayta.Server
                      , Dayta.Server.State
+                     , Dayta.Types.Dataset
                      , Dayta.Types.DataItem
                      , Dayta.Types.Dayta
+                     , Dayta.Types.Username
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , containers

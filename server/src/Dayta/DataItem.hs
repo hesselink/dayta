@@ -10,14 +10,18 @@ import qualified Opaleye as O
 
 import Dayta.Types.DataItem (DataItem (DataItem, datetime, value))
 import Dayta.Types.Dayta (Dayta, withConnection)
+import Dayta.Types.Dataset (Dataset, unDataset)
+import Dayta.Types.Username (Username, unUsername)
 import qualified Dayta.Db.DataItem as Db
 
 
-toDb :: DataItem -> Db.DataItemColumnW
-toDb di = Db.DataItem
+toDb :: Username -> Dataset -> DataItem -> Db.DataItemColumnW
+toDb username dataset di = Db.DataItem
   { Db.id = Nothing
   , Db.datetime = O.constant (datetime di)
   , Db.values = O.constant (Json.object ["value" .= (value di)])
+  , Db.username = O.constant username
+  , Db.dataset = O.constant dataset
   }
 
 fromDb :: Db.DataItem -> DataItem
@@ -32,10 +36,11 @@ fromDb di = DataItem
         Json.Success v -> v
     fromValues _               = error ("No json object found when reading data item.")
 
-create :: DataItem -> Dayta ()
-create di = withConnection $ \conn -> do
-  Db.insert conn (toDb di)
+create :: Username -> Dataset -> DataItem -> Dayta ()
+create username dataset di = withConnection $ \conn -> do
+  Db.insert conn (toDb username dataset di)
 
-list :: Dayta [DataItem]
-list = withConnection $ \conn -> do
-  fmap fromDb <$> Db.queryAll conn
+list :: Username -> Dataset -> Dayta [DataItem]
+list username dataset = withConnection $ \conn -> do
+  fmap fromDb <$>
+    Db.queryBy (Db.Username . unUsername $ username) (Db.Dataset . unDataset $ dataset) conn

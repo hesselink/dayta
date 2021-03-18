@@ -1,17 +1,16 @@
 module Dayta.Handler.DataItem (list, create) where
 
-import Data.Text (Text)
-
 import qualified Dayta.DataItem as Domain
 import Dayta.Types.Dayta (Dayta)
 import Dayta.Types.DataItem (DataItem)
+import Dayta.Types.Dataset (Dataset)
+import Dayta.Types.Username (Username)
 
 import Debug.Trace
 
-list :: Text -> Text -> Dayta [DataItem]
-list _username _dataset =
-  Domain.list
+list :: Username -> Dataset -> Dayta [DataItem]
+list = Domain.list
 
-create :: Text -> Text -> DataItem -> Dayta ()
-create _username _dataset dataitem = traceShow dataitem $
-  Domain.create dataitem
+create :: Username -> Dataset -> DataItem -> Dayta ()
+create username dataset dataitem = traceShow dataitem $
+  Domain.create username dataset dataitem
