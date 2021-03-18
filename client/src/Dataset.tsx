@@ -51,7 +51,7 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
                  Date: <input type="date" className="date" value={ this.state.date } onChange={ e => this.dateInputChange(e) } />
                </label><br />
                <label>
-                 Value: <input type="number" className="number" value={ this.state.number } onChange={ e => this.numberInputChange(e) } />
+                 Value: <input type="number" step="0.1" className="number" value={ this.state.number } onChange={ e => this.numberInputChange(e) } />
                </label><br />
                <input type="submit" value="Save" />
              </form>
@@ -111,7 +111,7 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
     let dateInput : HTMLInputElement = e.currentTarget.getElementsByClassName("date")[0] as HTMLInputElement;
     let numberInput : HTMLInputElement = e.currentTarget.getElementsByClassName("number")[0] as HTMLInputElement;
     let date : number = Date.parse(dateInput.value);
-    let num : number = parseInt(numberInput.value);
+    let num : number = parseFloat(numberInput.value);
     let hasError = false;
     if (isNaN(date)) {
       hasError = true;
