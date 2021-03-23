@@ -1,0 +1,15 @@
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+
+label {
+  display: grid;
+  font-size: 26px;
+}
+
+input {
+  font-size: 26px;
+  margin-top: 10px;
+  max-width: 400px;
+}

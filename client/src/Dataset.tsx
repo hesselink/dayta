@@ -37,6 +37,22 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
     let { user, name, loadStatus, saveStatus, data } = this.props
     console.log(loadStatus, data)
     return <div>
+             <form onSubmit={ e => this.saveDataItem(e) }>
+               <label>
+                 <span className="label">Date:</span> <input type="date" className="date" value={ this.state.date } onChange={ e => this.dateInputChange(e) } />
+               </label><br />
+               <label>
+                 <span className="label">Value:</span> <input type="number" step="0.1" className="number" value={ this.state.number } onChange={ e => this.numberInputChange(e) } />
+               </label><br />
+               <input type="submit" value="Save" />
+             </form>
+           </div>
+           /*
+             <h3>{ (saveStatus == "saving" ? "Saving..." :
+                    saveStatus == "saved"  ? "Saved" :
+                    saveStatus == "failed"  ? "Error saving" : ""
+                   ) }
+             </h3>
              <h2>Hello {user}!</h2>
              <h3>{ (loadStatus == "loading" ? "Loading" :
                     loadStatus == "loaded"  ? "Viewing" :
@@ -46,21 +62,7 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
              <ul>
              { data.map((item, ix) => <DataListItem key={ix} data={item}/>) }
              </ul>
-             <form onSubmit={ e => this.saveDataItem(e) }>
-               <label>
-                 Date: <input type="date" className="date" value={ this.state.date } onChange={ e => this.dateInputChange(e) } />
-               </label><br />
-               <label>
-                 Value: <input type="number" step="0.1" className="number" value={ this.state.number } onChange={ e => this.numberInputChange(e) } />
-               </label><br />
-               <input type="submit" value="Save" />
-             </form>
-             <h3>{ (saveStatus == "saving" ? "Saving..." :
-                    saveStatus == "saved"  ? "Saved" :
-                    saveStatus == "failed"  ? "Error saving" : ""
-                   ) }
-             </h3>
-           </div>
+            */
   }
 
   dateInputChange (e : React.ChangeEvent<HTMLInputElement>) {

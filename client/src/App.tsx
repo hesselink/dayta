@@ -6,7 +6,7 @@ import DatasetContainer from "./DatasetContainer"
 const App = () => (
   <Router>
     <div>
-      This always shows
+      <header></header>
 
       <Route exact path="/" component={Home} />
       <Route exact path="/user/:user" component={UserPage} />

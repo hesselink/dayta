@@ -1,6 +1,8 @@
 const path = require("path")
 const { CheckerPlugin } = require("awesome-typescript-loader")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const CopyPlugin = require("copy-webpack-plugin");
+const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 
 module.exports = {
   devtool: "source-map",
@@ -42,7 +44,9 @@ module.exports = {
     new HtmlWebpackPlugin(
       { title: "Dayta"
       }
-    )
+    ),
+    new CopyPlugin({patterns: [{ from: "src/index.css", to: "static/index.css" }]}),
+    new HtmlWebpackTagsPlugin({ tags: "static/index.css", append: true })
   ],
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"]
