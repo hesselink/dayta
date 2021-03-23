@@ -9,9 +9,12 @@
   "author": "Erik Hesselink",
   "license": "ISC",
   "dependencies": {
+    "@types/chart.js": "^2.9.31",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "@types/react-router-dom": "^5.1.7",
+    "chart.js": "^2.9.4",
+    "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",

@@ -1,6 +1,8 @@
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
 import "whatwg-fetch"
+import { Chart } from "chart.js"
+import * as moment from "moment"
 
 interface DatasetProps {
   user : string
@@ -46,6 +48,7 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
                </label><br />
                <input type="submit" value="Save" />
              </form>
+             <canvas id="chart" width="400" height="400" />
            </div>
            /*
              <h3>{ (saveStatus == "saving" ? "Saving..." :
@@ -63,6 +66,45 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
              { data.map((item, ix) => <DataListItem key={ix} data={item}/>) }
              </ul>
             */
+  }
+
+  componentDidMount () {
+    this.renderChart();
+  }
+
+  componentDidUpdate () {
+    this.renderChart();
+  }
+
+  renderChart () {
+    let { user, name, loadStatus, saveStatus, data } = this.props
+    const chartEl = document.getElementById("chart")! as HTMLCanvasElement;
+    console.log("xxx", data.map(x => x.datetime), data.map(x => x.value));
+    const chart : Chart = new Chart(chartEl, {
+      type: "line",
+      data: {
+        labels: data.map(x => moment(x.datetime)),
+        datasets: [{
+            label: name,
+            data: data.map(x => x.value),
+            fill: false,
+            lineTension: 0,
+            pointBackgroundColor: "rgb(54, 162, 235)"
+        }]
+    },
+    options: {
+        scales: {
+            xAxes: [{
+              type: "time"
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+      });
   }
 
   dateInputChange (e : React.ChangeEvent<HTMLInputElement>) {
