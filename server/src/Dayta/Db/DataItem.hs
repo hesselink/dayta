@@ -19,6 +19,7 @@ import Prelude hiding (all, id)
 
 import Control.Monad (void)
 import Control.Monad.IO.Class (liftIO, MonadIO)
+import Data.Proxy (Proxy (Proxy))
 
 import Data.Int (Int64)
 import Data.Profunctor (dimap)
@@ -27,7 +28,7 @@ import Data.Profunctor.Product.TH (makeAdaptorAndInstance)
 import Data.Time.Clock (UTCTime)
 import Opaleye (Column, Constant, PGInt8, Query, QueryRunnerColumnDefault (..), Table (Table),
                 fieldQueryRunnerColumn, queryTable, required, runInsertMany, runQuery,
-                unsafeCoerceColumn, PGTimestamptz, PGJsonb, optional)
+                unsafeCoerceColumn, PGTimestamptz, PGJsonb, optional, IsSqlType (showSqlType))
 import qualified Data.Aeson                           as Json
 import qualified Database.PostgreSQL.Simple           as Pg
 import qualified Database.PostgreSQL.Simple.FromField as Pg
@@ -46,6 +47,9 @@ instance Pg.FromField Id where
 instance QueryRunnerColumnDefault Id Id where
   queryRunnerColumnDefault = fieldQueryRunnerColumn
 
+instance IsSqlType Id where
+  showSqlType _ = showSqlType (Proxy :: Proxy PGInt8)
+
 instance QueryRunnerColumnDefault Json.Value Json.Value where
   queryRunnerColumnDefault = fieldQueryRunnerColumn
 
@@ -57,6 +61,12 @@ instance QueryRunnerColumnDefault UTCTime UTCTime where
 
 instance Default Constant UTCTime (Column UTCTime) where
   def = fmap unsafeCoerceColumn (def :: Constant UTCTime (Column PGTimestamptz))
+
+instance IsSqlType UTCTime where
+  showSqlType _ = showSqlType (Proxy :: Proxy PGTimestamptz)
+
+instance IsSqlType Json.Value where
+  showSqlType _ = showSqlType (Proxy :: Proxy PGJsonb)
 
 data DataItem' a b c = DataItem
   { id       :: a
