@@ -11,6 +11,7 @@ import Servant.API (FromHttpApiData (..))
 import qualified Dayta.Db.DataItem as Db
 
 newtype Dataset = Dataset { unDataset :: Text }
+  deriving (Eq, Show)
 
 instance Default Constant Dataset (Column Db.Dataset) where
   def = dimap unDataset unsafeCoerceColumn (def :: Constant Text (Column PGText))

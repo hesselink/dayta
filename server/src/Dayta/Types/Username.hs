@@ -11,6 +11,7 @@ import Servant.API (FromHttpApiData (..))
 import qualified Dayta.Db.DataItem as Db
 
 newtype Username = Username { unUsername :: Text }
+  deriving (Eq, Show)
 
 instance Default Constant Username (Column Db.Username) where
   def = dimap unUsername unsafeCoerceColumn (def :: Constant Text (Column PGText))

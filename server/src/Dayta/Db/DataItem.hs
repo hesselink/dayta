@@ -18,6 +18,7 @@ module Dayta.Db.DataItem
 , queryAll
 , queryBy
 , insert
+, deleteAll
 ) where
 
 import Prelude hiding (all, id, (.))
@@ -32,10 +33,7 @@ import Data.Profunctor.Product.Default (Default (..))
 import Data.Profunctor.Product.TH (makeAdaptorAndInstance)
 import Data.Text (Text)
 import Data.Time.Clock (UTCTime)
-import Opaleye (Column, Constant, PGInt8, Query, QueryRunnerColumnDefault (..), Table (Table),
-                fieldQueryRunnerColumn, queryTable, required, runInsertMany, runQuery,
-                unsafeCoerceColumn, PGTimestamptz, PGJsonb, PGText, optional, keepWhen, (.==),
-                (.&&), constant)
+import Opaleye hiding (values, table)
 import qualified Data.Aeson                           as Json
 import qualified Database.PostgreSQL.Simple           as Pg
 import qualified Database.PostgreSQL.Simple.FromField as Pg
@@ -130,5 +128,12 @@ queryAll conn = liftIO $ runQuery conn all
 queryBy :: MonadIO m => Username -> Dataset -> Pg.Connection -> m [DataItem]
 queryBy un ds conn = liftIO $ runQuery conn (by un ds)
 
-insert :: MonadIO m => Pg.Connection -> DataItemColumnW -> m ()
-insert conn di = liftIO $ void $ runInsertMany conn table [di]
+insert :: MonadIO m => Pg.Connection -> [DataItemColumnW] -> m ()
+insert conn dis = liftIO $ void $ runInsertMany conn table dis
+
+deleteAll :: MonadIO m => Username -> Dataset -> Pg.Connection -> m ()
+deleteAll un ds conn = liftIO $ void $ runDelete_ conn Delete
+  { dTable = table
+  , dWhere = \fs -> username fs .== constant un .&& dataset fs .== constant ds
+  , dReturning = rCount
+  }
