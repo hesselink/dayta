@@ -5,7 +5,7 @@ module Dayta.Db.DataItem
 , Id
 , Username' (Username)
 , Username
-, Dataset' (Dataset)
+, Dataset' (Dataset, unDataset)
 , Dataset
 
 , DataItem' (DataItem, id, datetime, values, username, dataset)
@@ -15,6 +15,7 @@ module Dayta.Db.DataItem
 
 , table
 , all
+, byUser
 , queryAll
 , queryBy
 , insert
@@ -119,8 +120,10 @@ all :: Query DataItemColumn
 all = queryTable table
 
 by :: Username -> Dataset -> Query DataItemColumn
-by un ds = keepWhen (\di -> username di .== constant un .&& dataset di .== constant ds)
-         . queryTable table
+by un ds = keepWhen (\di -> username di .== constant un .&& dataset di .== constant ds) . all
+
+byUser :: Username -> Query DataItemColumn
+byUser un = keepWhen (\di -> username di .== constant un) . all
 
 queryAll :: MonadIO m => Pg.Connection -> m [DataItem]
 queryAll conn = liftIO $ runQuery conn all

@@ -17,7 +17,9 @@ library
   hs-source-dirs:      src
   exposed-modules:     Dayta.Api
                      , Dayta.DataItem
+                     , Dayta.DataSet
                      , Dayta.Db.DataItem
+                     , Dayta.Db.DataSet
                      , Dayta.Handler.DataItem
                      , Dayta.Handler.DataSet
                      , Dayta.Server

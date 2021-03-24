@@ -12,11 +12,14 @@ import Dayta.Types.Username (Username)
 -- /user/:username/dataset/:dataset/item GET => get all dataset items
 
 type Api = "user" :> Capture "username" Username
-             :> "dataset" :> Capture "dataset" Dataset
+             :> "dataset" :>
+               ( Get '[JSON] [Dataset]
+             :<|> Capture "dataset" Dataset
                :> (  "item" :> (Get '[JSON] [DataItem] :<|> ReqBody '[JSON] DataItem  :> Post '[JSON] ())
                 :<|> ReqBody '[OctetStream] ByteString :> Post '[JSON] ()
                 :<|> Delete '[JSON] ()
                   )
+               )
 
 type Api' =  "api" :> Api
         :<|> "static" :> Raw

@@ -1,4 +1,4 @@
-module Dayta.Handler.DataSet (upload, delete) where
+module Dayta.Handler.DataSet (upload, delete, list) where
 
 import Control.Monad.Trans (liftIO)
 import Data.ByteString (ByteString)
@@ -12,6 +12,7 @@ import Dayta.Types.Username (Username)
 import Dayta.Types.Dataset (Dataset)
 import Dayta.Types.Dayta (Dayta)
 import qualified Dayta.DataItem as DataItem
+import qualified Dayta.DataSet as Domain
 
 upload :: Username -> Dataset -> ByteString -> Dayta ()
 upload username dataset body = do
@@ -25,3 +26,5 @@ upload username dataset body = do
 delete :: Username -> Dataset -> Dayta ()
 delete = DataItem.deleteAll
 
+list :: Username -> Dayta [Dataset]
+list = Domain.list

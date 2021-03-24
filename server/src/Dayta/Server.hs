@@ -16,12 +16,15 @@ apiServer :: Dayta.State -> Server Api
 apiServer st = hoistServer (Proxy :: Proxy Api) (daytaToHandler st) apiServer'
 
 apiServer' :: ServerT Api Dayta
-apiServer' username dataset
-   = (  DataItem.list username dataset
-   :<|> DataItem.create username dataset
-     )
- :<|> DataSet.upload username dataset
- :<|> DataSet.delete username dataset
+apiServer' username
+   =   DataSet.list username
+  :<|> (\dataset ->
+         (  DataItem.list username dataset
+       :<|> DataItem.create username dataset
+         )
+     :<|> DataSet.upload username dataset
+     :<|> DataSet.delete username dataset
+       )
 
 server :: Dayta.State -> Server Api'
 server st
