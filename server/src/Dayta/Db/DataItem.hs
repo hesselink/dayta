@@ -130,5 +130,8 @@ queryAll conn = liftIO $ runQuery conn all
 queryBy :: MonadIO m => Username -> Dataset -> Pg.Connection -> m [DataItem]
 queryBy un ds conn = liftIO $ runQuery conn (by un ds)
 
-insert :: MonadIO m => Pg.Connection -> DataItemColumnW -> m ()
-insert conn di = liftIO $ void $ runInsertMany conn table [di]
+insert :: MonadIO m => Pg.Connection -> [DataItemColumnW] -> m ()
+insert conn dis = liftIO $ void $ runInsertMany conn table dis
+
+deleteAll :: MonadIO m => Username -> Dataset -> Pg.Connection -> m ()
+deleteAll = _

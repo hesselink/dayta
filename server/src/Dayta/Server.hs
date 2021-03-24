@@ -9,6 +9,7 @@ import Servant
 import Dayta.Types.Dayta (Dayta, daytaToHandler)
 import Dayta.Api (Api, Api')
 import qualified Dayta.Handler.DataItem as DataItem
+import qualified Dayta.Handler.DataSet as DataSet
 import qualified Dayta.Server.State as Dayta
 
 apiServer :: Dayta.State -> Server Api
@@ -16,8 +17,10 @@ apiServer st = hoistServer (Proxy :: Proxy Api) (daytaToHandler st) apiServer'
 
 apiServer' :: ServerT Api Dayta
 apiServer' username dataset
-   =  DataItem.list username dataset
- :<|> DataItem.create username dataset
+   = (  DataItem.list username dataset
+   :<|> DataItem.create username dataset
+     )
+ :<|> DataSet.upload username dataset
 
 server :: Dayta.State -> Server Api'
 server st

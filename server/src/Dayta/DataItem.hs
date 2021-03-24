@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Dayta.DataItem (create, list) where
+module Dayta.DataItem (create, createMany, list) where
 
 import Data.Maybe (fromMaybe)
 
@@ -38,9 +38,16 @@ fromDb di = DataItem
 
 create :: Username -> Dataset -> DataItem -> Dayta ()
 create username dataset di = withConnection $ \conn -> do
-  Db.insert conn (toDb username dataset di)
+  Db.insert conn [toDb username dataset di]
+
+createMany :: Username -> Dataset -> [DataItem] -> Dayta ()
+createMany username dataset dis = withConnection $ \conn -> do
+  Db.insert conn (map (toDb username dataset) dis)
 
 list :: Username -> Dataset -> Dayta [DataItem]
 list username dataset = withConnection $ \conn -> do
   fmap fromDb <$>
     Db.queryBy (Db.Username . unUsername $ username) (Db.Dataset . unDataset $ dataset) conn
+
+deleteAll :: Username -> Dataset -> Dayta ()
+deleteAll username dataset = withConnection $ Db.deleteAll username dataset

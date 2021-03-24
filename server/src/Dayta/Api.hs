@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds, TypeOperators #-}
 module Dayta.Api (Api, Api') where
 
+import Data.ByteString (ByteString)
 import Servant.API
 
 import Dayta.Types.Dataset (Dataset)
@@ -12,7 +13,9 @@ import Dayta.Types.Username (Username)
 
 type Api = "user" :> Capture "username" Username
              :> "dataset" :> Capture "dataset" Dataset
-               :> "item" :> (Get '[JSON] [DataItem] :<|> ReqBody '[JSON] DataItem  :> Post '[JSON] ())
+               :> (  "item" :> (Get '[JSON] [DataItem] :<|> ReqBody '[JSON] DataItem  :> Post '[JSON] ())
+                :<|> ReqBody '[OctetStream] ByteString :> Put '[JSON] ()
+                  )
 
 type Api' =  "api" :> Api
         :<|> "static" :> Raw
