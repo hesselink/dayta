@@ -10,6 +10,7 @@ import qualified Servant
 
 import Dayta.Api (Api')
 import Dayta.Server (server)
+import Dayta.Db.Migration (migrate)
 import qualified Dayta.Server.State as Dayta
 
 import qualified CmdLine as CmdLine
@@ -20,6 +21,7 @@ main = do
   cmdOpts <- CmdLine.getOpts
   cfg <- Config.get (CmdLine.configFile cmdOpts)
   pool <- createPool (Db.connect (Config.dbConnectInfo cfg)) Db.close 1 10 100
+  migrate pool (Config.migrationDir_ cfg) (Config.migrationVerbose_ cfg)
   let st = Dayta.State
         { Dayta.dbConnectionPool = pool
         , Dayta.staticFileDir = Config.staticFileDir_ cfg
