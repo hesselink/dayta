@@ -1,4 +1,4 @@
-module Dayta.Handler.DataSet (upload, delete, list) where
+module Dayta.Handler.DataSet (upload, delete, list, get) where
 
 import Control.Monad.Trans (liftIO)
 import Data.ByteString (ByteString)
@@ -9,12 +9,12 @@ import qualified Data.Csv as Csv
 import qualified Data.Vector as Vector
 
 import Dayta.Types.Username (Username)
-import Dayta.Types.Dataset (Dataset)
+import Dayta.Types.Dataset (Dataset, DatasetName)
 import Dayta.Types.Dayta (Dayta)
 import qualified Dayta.DataItem as DataItem
 import qualified Dayta.DataSet as Domain
 
-upload :: Username -> Dataset -> ByteString -> Dayta ()
+upload :: Username -> DatasetName -> ByteString -> Dayta ()
 upload username dataset body = do
   liftIO (print ("xxx", body))
   case Csv.decode Csv.HasHeader (Lazy.fromStrict body) of
@@ -23,8 +23,11 @@ upload username dataset body = do
       let dis = Vector.toList $ rs
       DataItem.createMany username dataset dis
 
-delete :: Username -> Dataset -> Dayta ()
+delete :: Username -> DatasetName -> Dayta ()
 delete = DataItem.deleteAll
 
-list :: Username -> Dayta [Dataset]
+list :: Username -> Dayta [DatasetName]
 list = Domain.list
+
+get :: Username -> DatasetName -> Dayta Dataset
+get = Domain.get
