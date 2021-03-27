@@ -31,11 +31,13 @@ library
                      , Dayta.Types.Dayta
                      , Dayta.Types.Field
                      , Dayta.Types.Username
+                     , Paths_dayta
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , bytestring
                      , cassava
                      , containers
+                     , file-embed
                      , monad-control
                      , mtl
                      , opaleye
@@ -74,7 +76,6 @@ executable dayta-exe
   default-language:    Haskell2010
   other-modules:       CmdLine
                      , Config
-                     , Paths_dayta
 
 test-suite dayta-test
   type:                exitcode-stdio-1.0
