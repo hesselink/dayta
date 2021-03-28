@@ -25,6 +25,7 @@ apiServer' username
      :<|> DataSet.upload username dataset
      :<|> DataSet.delete username dataset
      :<|> DataSet.get username dataset
+     :<|> DataSet.createOrUpdate username dataset
        )
 
 server :: Dayta.State -> Server Api'

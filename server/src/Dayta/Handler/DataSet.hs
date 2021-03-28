@@ -1,8 +1,10 @@
-module Dayta.Handler.DataSet (upload, delete, list, get) where
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE LambdaCase #-}
+module Dayta.Handler.DataSet (upload, delete, list, get, createOrUpdate) where
 
 import Control.Monad.Trans (liftIO)
 import Data.ByteString (ByteString)
-import Servant (err400, errBody, throwError)
+import Servant (err400, err404, errBody, throwError)
 import qualified Data.ByteString.Lazy as Lazy
 import qualified Data.ByteString.Lazy.UTF8 as UTF8
 import qualified Data.Csv as Csv
@@ -30,4 +32,9 @@ list :: Username -> Dayta [DatasetName]
 list = Domain.list
 
 get :: Username -> DatasetName -> Dayta Dataset
-get = Domain.get
+get un dn = Domain.get un dn >>= \case
+  Just ds -> return ds
+  Nothing -> throwError $ err404 { errBody = "Dataset not found." }
+
+createOrUpdate :: Username -> DatasetName -> Dataset -> Dayta ()
+createOrUpdate = Domain.createOrUpdate

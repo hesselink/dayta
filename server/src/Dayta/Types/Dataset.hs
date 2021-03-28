@@ -9,7 +9,7 @@ module Dayta.Types.Dataset
   , Dataset (Dataset, name, fields)
   ) where
 
-import Data.Aeson (ToJSON)
+import Data.Aeson (ToJSON, FromJSON)
 import Data.Profunctor (dimap)
 import Data.Profunctor.Product.Default (Default (..))
 import Data.Text (Text)
@@ -18,13 +18,13 @@ import Opaleye (Column, Constant, PGText, unsafeCoerceColumn)
 import Servant.API (FromHttpApiData (..))
 
 import Dayta.Types.Field (Field)
-import qualified Dayta.Db.DataItem as Db
+import qualified Dayta.Db.DataSet as Db
 
 newtype DatasetName = DatasetName { unDatasetName :: Text }
   deriving stock (Eq, Show, Generic)
-  deriving newtype (ToJSON)
+  deriving newtype (ToJSON, FromJSON)
 
-instance Default Constant DatasetName (Column Db.Dataset) where
+instance Default Constant DatasetName (Column Db.DatasetName) where
   def = dimap unDatasetName unsafeCoerceColumn (def :: Constant Text (Column PGText))
 
 instance FromHttpApiData DatasetName where
@@ -34,4 +34,4 @@ data Dataset = Dataset
   { name   :: DatasetName
   , fields :: [Field]
   } deriving stock (Show, Eq, Generic)
-    deriving anyclass (ToJSON)
+    deriving anyclass (ToJSON, FromJSON)

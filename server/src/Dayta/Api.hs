@@ -19,6 +19,7 @@ type Api = "user" :> Capture "username" Username
                 :<|> ReqBody '[OctetStream] ByteString :> Post '[JSON] ()
                 :<|> Delete '[JSON] ()
                 :<|> Get '[JSON] Dataset
+                :<|> ReqBody '[JSON] Dataset :> Put '[JSON] ()
                   )
                )
 
