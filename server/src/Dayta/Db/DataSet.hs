@@ -96,6 +96,6 @@ insert :: MonadIO m => DatasetColumnW -> Pg.Connection ->  m Id
 insert ds conn = head <$> liftIO (runInsert_ conn (Insert table [ds] (rReturning id) Nothing))
 
 update :: MonadIO m => Id -> DatasetColumnW -> Pg.Connection -> m ()
-update dsId ds conn = void $ liftIO (runUpdate_ conn (Update table (\fs -> fs `merge` ds) (\t -> id t .== constant dsId) rCount))
+update dsId ds conn = void $ liftIO (runUpdate_ conn (Update table (`merge` ds) (\t -> id t .== constant dsId) rCount))
   where
     merge defs writes = writes { id = Just (id defs) } -- TODO generalize?

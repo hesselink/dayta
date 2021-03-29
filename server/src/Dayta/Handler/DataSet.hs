@@ -22,7 +22,7 @@ upload username dataset body = do
   case Csv.decode Csv.HasHeader (Lazy.fromStrict body) of
     Left err -> throwError $ err400 { errBody = UTF8.fromString $ "Error parsing CSV: " ++ err }
     Right rs -> do
-      let dis = Vector.toList $ rs
+      let dis = Vector.toList rs
       DataItem.createMany username dataset dis
 
 delete :: Username -> DatasetName -> Dayta ()

@@ -1,4 +1,8 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving, TypeOperators, MultiParamTypeClasses, TypeFamilies, UndecidableInstances, RankNTypes #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE RankNTypes #-}
 module Dayta.Types.Dayta (Dayta, daytaToHandler, withConnection) where
 
 import Control.Monad.Base (MonadBase)
@@ -23,7 +27,7 @@ runDayta :: Dayta.State -> Dayta a -> Handler a
 runDayta st d = runReaderT (unDayta d) st
 
 daytaToHandler :: Dayta.State -> (forall x. Dayta x -> Handler x)
-daytaToHandler st = runDayta st
+daytaToHandler = runDayta
 
 withConnection :: (Db.Connection -> Dayta a) -> Dayta a
 withConnection act = do

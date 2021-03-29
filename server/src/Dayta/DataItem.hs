@@ -23,7 +23,7 @@ toDb :: Username -> Db.Dataset.Id -> DataItem -> Db.DataItemColumnW
 toDb username datasetId di = Db.DataItem
   { Db.id = Nothing
   , Db.datetime = O.constant (datetime di)
-  , Db.values = O.constant (Json.object ["value" .= (value di)])
+  , Db.values = O.constant (Json.object ["value" .= value di])
   , Db.username = O.constant username
   , Db.datasetId = O.constant datasetId
   }
@@ -38,7 +38,7 @@ fromDb di = DataItem
       case Json.fromJSON (fromMaybe (error "No value key found in data item.") (Map.lookup "value" o)) of
         Json.Error str -> error ("Error parsing value field in data item: " ++ str)
         Json.Success v -> v
-    fromValues _               = error ("No json object found when reading data item.")
+    fromValues _               = error "No json object found when reading data item."
 
 -- TODO 404 if missing
 create :: Username -> DatasetName -> DataItem -> Dayta ()
