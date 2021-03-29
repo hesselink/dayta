@@ -72,6 +72,8 @@ instance QueryRunnerColumnDefault UTCTime UTCTime where
 instance Default Constant UTCTime (Column UTCTime) where
   def = fmap unsafeCoerceColumn (def :: Constant UTCTime (Column PGTimestamptz))
 
+instance PGOrd UTCTime
+
 data DataItem' a b c d e = DataItem
   { id        :: a
   , datetime  :: b
@@ -96,7 +98,7 @@ table = Table "data_item" $ pDataItem DataItem
   }
 
 all :: Query DataItemColumn
-all = queryTable table
+all = orderBy (asc datetime) (queryTable table)
 
 by :: Username -> DatasetName -> Query DataItemColumn
 by un dsn = proc () -> do
