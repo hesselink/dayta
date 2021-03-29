@@ -90,7 +90,7 @@ get un dn conn = listToMaybe <$> liftIO (runQuery conn $ by un dn)
 getWithFields :: MonadIO m => Username -> DatasetName -> Pg.Connection -> m (Maybe (Dataset, [Field]))
 getWithFields un dn conn = liftIO $ Pg.withTransaction conn $ do
   mDs <- get un dn conn
-  forM mDs $ \ds -> (ds,) <$> Field.getByDatasetId (id ds)
+  forM mDs $ \ds -> (ds,) <$> Field.getByDatasetId (id ds) conn
 
 insert :: MonadIO m => DatasetColumnW -> Pg.Connection ->  m Id
 insert ds conn = head <$> liftIO (runInsert_ conn (Insert table [ds] (rReturning id) Nothing))

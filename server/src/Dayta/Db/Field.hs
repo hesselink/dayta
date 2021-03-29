@@ -85,8 +85,8 @@ all = queryTable table
 byDatasetId :: Dataset.Id -> Query FieldColumn
 byDatasetId ds = keepWhen (\t -> datasetId t .== constant ds) . all
 
-getByDatasetId :: MonadIO m => Dataset.Id -> m [Field]
-getByDatasetId = undefined
+getByDatasetId :: MonadIO m => Dataset.Id -> Pg.Connection -> m [Field]
+getByDatasetId dsId conn = liftIO $ runQuery conn (byDatasetId dsId)
 
 insert :: MonadIO m => [FieldColumnW] -> Pg.Connection -> m ()
 insert fs conn = void $ liftIO (runInsert_ conn (Insert table fs rCount Nothing))
