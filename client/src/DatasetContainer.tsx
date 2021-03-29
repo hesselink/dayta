@@ -1,19 +1,21 @@
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
 
-import { Dataset, DataItem } from "./Dataset"
+import { Dataset, DataItem, DatasetValue } from "./Dataset"
 
 interface DatasetContainerState {
   loadStatus : "loading" | "loaded" | "failed"
   saveStatus : "none" | "saving" | "saved" | "failed"
-  data : Array<DataItem>
+  dataset : DatasetValue | undefined
+  items : Array<DataItem>
 }
 
 class DatasetContainer extends React.Component<RouteComponentProps<any>> {
   state : DatasetContainerState = {
     loadStatus : "loading",
     saveStatus : "none",
-    data : []
+    dataset : undefined,
+    items : []
   }
 
   componentDidMount () {
@@ -21,13 +23,17 @@ class DatasetContainer extends React.Component<RouteComponentProps<any>> {
   }
 
   getItemUrl () : string {
+    return this.getDatasetUrl() + "/item"
+  }
+
+  getDatasetUrl () : string {
     return "/api/user/" + this.props.match.params.user
-         + "/dataset/" + this.props.match.params.dataset + "/item"
+         + "/dataset/" + this.props.match.params.dataset
   }
 
   reloadData () {
-    fetch(this.getItemUrl())
-      .then(response => response.json())
+    Promise.all([fetch(this.getDatasetUrl()), fetch(this.getItemUrl())])
+      .then(responses => Promise.all([responses[0].json(), responses[1].json()]))
       .then(this.renderResponse.bind(this))
       .catch(this.renderError.bind(this))
   }
@@ -69,16 +75,18 @@ class DatasetContainer extends React.Component<RouteComponentProps<any>> {
                     name={this.props.match.params.dataset}
                     loadStatus={this.state.loadStatus}
                     saveStatus={this.state.saveStatus}
-                    data={this.state.data}
+                    items={this.state.items}
+                    dataset={this.state.dataset}
                     saveDataItem={this.saveDataItem.bind(this)}
            />
   }
 
-  renderResponse (json : any) : void {
-    console.log("Loaded data: ", json)
+  renderResponse ([dsJson, isJson] : any[]) : void {
+    console.log("Loaded data: ", dsJson, isJson)
     this.setState((prevState) => ({
       loadStatus: "loaded",
-      data: json
+      items: isJson,
+      dataset: dsJson
     }))
   }
 

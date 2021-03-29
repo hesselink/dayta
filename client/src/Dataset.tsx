@@ -9,13 +9,23 @@ interface DatasetProps {
   name : string
   loadStatus : "loading" | "loaded" | "failed"
   saveStatus : "none" | "saving" | "saved" | "failed"
-  data : Array<DataItem>
+  dataset : DatasetValue | undefined
+  items : Array<DataItem>
   saveDataItem : (dataItem : DataItem) => void
 }
 
 interface DatasetState {
   date : string
-  number : string
+  fields : string[]
+}
+
+export interface DatasetValue {
+  name : string
+  fields : DatasetField[]
+}
+
+export interface DatasetField {
+  name : string
 }
 
 export interface DataItem {
@@ -30,22 +40,27 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
     let now = new Date();
     this.state = {
       date : "" + now.getFullYear() + "-" + this.padZero((now.getMonth() + 1)) + "-" + this.padZero(now.getDate()),
-      number : ""
+      fields : []
     };
   }
 
   render () : JSX.Element {
     console.log("Dataset.render", this)
-    let { user, name, loadStatus, saveStatus, data } = this.props
-    console.log(loadStatus, data)
+    let { user, name, loadStatus, saveStatus, dataset, items } = this.props
+    console.log(loadStatus, items)
     return <div>
              <form onSubmit={ e => this.saveDataItem(e) }>
                <label>
                  <span className="label">Date:</span> <input type="date" className="date" value={ this.state.date } onChange={ e => this.dateInputChange(e) } />
                </label><br />
-               <label>
-                 <span className="label">Value:</span> <input type="number" step="0.1" className="number" value={ this.state.number } onChange={ e => this.numberInputChange(e) } />
-               </label><br />
+               { dataset ? dataset.fields.map((field, ix) =>
+                   <span key={ix}>
+                     <label>
+                       <span className="label">{ field.name }:</span> <input type="number" step="0.1" className="number" value={ this.state.fields[ix] } onChange={ e => this.numberInputChange(e, ix) } />
+                     </label><br />
+                   </span>
+                 ) : ""
+               }
                <input type="submit" value="Save" />
              </form>
              <canvas id="chart" width="400" height="400" />
@@ -77,16 +92,16 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
   }
 
   renderChart () {
-    let { user, name, loadStatus, saveStatus, data } = this.props
+    let { user, name, loadStatus, saveStatus, items } = this.props
     const chartEl = document.getElementById("chart")! as HTMLCanvasElement;
-    console.log("xxx", data.map(x => x.datetime), data.map(x => x.value));
+    console.log("xxx", items.map(x => x.datetime), items.map(x => x.value));
     const chart : Chart = new Chart(chartEl, {
       type: "line",
       data: {
-        labels: data.map(x => moment(x.datetime)),
+        labels: items.map(x => moment(x.datetime)),
         datasets: [{
             label: name,
-            data: data.map(x => x.value),
+            data: items.map(x => x.value),
             fill: false,
             lineTension: 0,
             pointBackgroundColor: "rgb(54, 162, 235)"
@@ -114,11 +129,11 @@ export class Dataset extends React.Component<DatasetProps, DatasetState> {
     })
   }
 
-  numberInputChange (e : React.ChangeEvent<HTMLInputElement>) {
+  numberInputChange (e : React.ChangeEvent<HTMLInputElement>, ix : number) {
     let val : string = e.target.value;
-    this.setState( {
-      "number": val
-    })
+    const { fields } = this.state;
+    fields[ix] = val;
+    this.setState({ fields });
   }
 
   padZero (num: number) : string {
