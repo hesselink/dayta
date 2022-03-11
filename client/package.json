@@ -9,7 +9,8 @@
   "author": "Erik Hesselink",
   "license": "ISC",
   "dependencies": {
-    "chart.js": "^2.9.4",
+    "chart.js": "^3.7.1",
+    "chartjs-adapter-moment": "^1.0.0",
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -19,7 +20,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
-    "@types/chart.js": "^2.9.31",
+    "@types/chart.js": "^2.9.35",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "@types/react-router-dom": "^5.1.7",

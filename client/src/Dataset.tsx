@@ -1,7 +1,6 @@
 import * as React from "react"
 import { RouteComponentProps } from "react-router-dom"
 import "whatwg-fetch"
-import { Chart } from "chart.js"
 import ItemChart from "./ItemChart"
 import * as moment from "moment"
 

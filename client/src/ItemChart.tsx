@@ -1,5 +1,7 @@
 import * as React from "react"
-import { Chart } from "chart.js"
+import Chart from "chart.js/auto"
+import { ChartData } from "chart.js"
+import 'chartjs-adapter-moment'
 import { DataItem } from "./Dataset"
 import * as moment from "moment"
 import * as _ from "underscore"
@@ -10,6 +12,8 @@ interface ItemChartProps {
 }
 
 export class ItemChart extends React.Component<ItemChartProps> {
+  chart?: Chart
+
   render () {
     return <canvas id="chart" width="400" height="400" />
   }
@@ -17,32 +21,41 @@ export class ItemChart extends React.Component<ItemChartProps> {
   renderChart () {
     let { name, items } = this.props
     const chartEl = document.getElementById("chart")! as HTMLCanvasElement;
-    console.log("xxx", items.map(x => x.datetime), items.map(x => x.value));
-    const chart : Chart = new Chart(chartEl, {
+    this.chart = new Chart(chartEl, {
       type: "line",
-      data: {
+      data: this.dataFromProps(this.props),
+      options: {
+          scales: {
+              xAxis: {
+                type: "time"
+              },
+              yAxis: {
+                beginAtZero: true
+              }
+          }
+      }
+    });
+  }
+
+  updateChart () {
+    if (this.chart === undefined) {
+      throw new Error("Chart not initialized when updating");
+    }
+    this.chart.data = this.dataFromProps(this.props);
+    this.chart.update();
+  }
+
+  dataFromProps (props: ItemChartProps): ChartData {
+    let { name, items } = this.props
+    return  {
         labels: items.map(x => moment(x.datetime)),
         datasets: [{
             label: name,
             data: items.map(x => x.value),
             fill: false,
-            lineTension: 0,
             pointBackgroundColor: "rgb(54, 162, 235)"
         }]
-      },
-      options: {
-          scales: {
-              xAxes: [{
-                type: "time"
-              }],
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true
-                  }
-              }]
-          }
       }
-    });
   }
 
   componentDidMount () {
@@ -51,7 +64,7 @@ export class ItemChart extends React.Component<ItemChartProps> {
 
   componentDidUpdate (prevProps : ItemChartProps) {
     if (!_.isEqual(prevProps, this.props)) {
-      this.renderChart();
+      this.updateChart();
     }
   }
 }
