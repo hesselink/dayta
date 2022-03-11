@@ -2,9 +2,12 @@ import * as React from "react"
 import Chart from "chart.js/auto"
 import { ChartData } from "chart.js"
 import 'chartjs-adapter-moment'
+import zoomPlugin from 'chartjs-plugin-zoom'
 import { DataItem } from "./Dataset"
 import * as moment from "moment"
 import * as _ from "underscore"
+
+Chart.register(zoomPlugin)
 
 interface ItemChartProps {
   name : string
@@ -32,6 +35,25 @@ export class ItemChart extends React.Component<ItemChartProps> {
               yAxis: {
                 beginAtZero: true
               }
+          },
+          plugins: {
+            zoom: {
+              pan: {
+                enabled: true
+              },
+              zoom: {
+                drag: {
+                  enabled: true,
+                  modifierKey: "shift"
+                },
+                pinch: {
+                  enabled: true
+                },
+                wheel: {
+                  enabled: true
+                }
+              }
+            }
           }
       }
     });
