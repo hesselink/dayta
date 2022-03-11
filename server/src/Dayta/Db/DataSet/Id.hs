@@ -18,11 +18,11 @@ type Id = Id' Int64
 
 makeAdaptorAndInstance "pId" ''Id'
 
-instance Default Constant Id (Column Id) where
-  def = dimap unId unsafeCoerceColumn (def :: Constant Int64 (Column PGInt8))
+instance Default ToFields Id (Column Id) where
+  def = dimap unId unsafeCoerceColumn (def :: ToFields Int64 (Column PGInt8))
 
 instance Pg.FromField Id where
   fromField fName mData = Id <$> Pg.fromField fName mData
 
-instance QueryRunnerColumnDefault Id Id where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField Id Id where
+  defaultFromField = fromPGSFromField

@@ -15,7 +15,7 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-15.13
+resolver: lts-18.27
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -40,9 +40,9 @@ packages:
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
 extra-deps:
-- servant-0.17
-- servant-server-0.17
-- postgresql-simple-migration-0.1.15.0
+- servant-0.19
+- servant-server-0.19
+- postgresql-simple-migration-0.1.15.0@sha256:123d8f62b0e300aede37e2d6dacc81b9468cb68dc5c3f52fe807085992280aa8,3969
 
 # Override default flag values for local packages and extra-deps
 flags: {}

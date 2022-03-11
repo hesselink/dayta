@@ -14,7 +14,7 @@ import Data.Profunctor (dimap)
 import Data.Profunctor.Product.Default (Default (..))
 import Data.Text (Text)
 import GHC.Generics (Generic)
-import Opaleye (Column, Constant, PGText, unsafeCoerceColumn)
+import Opaleye (Column, ToFields, PGText, unsafeCoerceColumn)
 import Servant.API (FromHttpApiData (..))
 
 import Dayta.Types.Field (Field)
@@ -24,8 +24,8 @@ newtype DatasetName = DatasetName { unDatasetName :: Text }
   deriving stock (Eq, Show, Generic)
   deriving newtype (ToJSON, FromJSON)
 
-instance Default Constant DatasetName (Column Db.DatasetName) where
-  def = dimap unDatasetName unsafeCoerceColumn (def :: Constant Text (Column PGText))
+instance Default ToFields DatasetName (Column Db.DatasetName) where
+  def = dimap unDatasetName unsafeCoerceColumn (def :: ToFields Text (Column PGText))
 
 instance FromHttpApiData DatasetName where
   parseUrlPiece = Right . DatasetName

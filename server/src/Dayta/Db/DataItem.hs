@@ -51,28 +51,28 @@ type Id = Id' Int64
 
 makeAdaptorAndInstance "pId" ''Id'
 
-instance Default Constant Id (Column Id) where
-  def = dimap unId unsafeCoerceColumn (def :: Constant Int64 (Column PGInt8))
+instance Default ToFields Id (Column Id) where
+  def = dimap unId unsafeCoerceColumn (def :: ToFields Int64 (Column PGInt8))
 
 instance Pg.FromField Id where
   fromField fName mData = Id <$> Pg.fromField fName mData
 
-instance QueryRunnerColumnDefault Id Id where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField Id Id where
+  defaultFromField = fromPGSFromField
 
-instance QueryRunnerColumnDefault Json.Value Json.Value where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField Json.Value Json.Value where
+  defaultFromField = fromPGSFromField
 
-instance Default Constant Json.Value (Column Json.Value) where
-  def = fmap unsafeCoerceColumn (def :: Constant Json.Value (Column PGJsonb))
+instance Default ToFields Json.Value (Column Json.Value) where
+  def = fmap unsafeCoerceColumn (def :: ToFields Json.Value (Column PGJsonb))
 
-instance QueryRunnerColumnDefault UTCTime UTCTime where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField UTCTime UTCTime where
+  defaultFromField = fromPGSFromField
 
-instance Default Constant UTCTime (Column UTCTime) where
-  def = fmap unsafeCoerceColumn (def :: Constant UTCTime (Column PGTimestamptz))
+instance Default ToFields UTCTime (Column UTCTime) where
+  def = fmap unsafeCoerceColumn (def :: ToFields UTCTime (Column PGTimestamptz))
 
-instance PGOrd UTCTime
+instance SqlOrd UTCTime
 
 data DataItem' a b c d e = DataItem
   { id        :: a
@@ -90,34 +90,34 @@ type DataItemColumnW = DataItem' (Maybe (Column Id)) (Column UTCTime) (Column Js
 
 table :: Table DataItemColumnW DataItemColumn
 table = Table "data_item" $ pDataItem DataItem
-  { id        = optional "id"
-  , datetime  = required "datetime"
-  , values    = required "values"
-  , username  = required "username"
-  , datasetId = required "dataset_id"
+  { id        = optionalTableField "id"
+  , datetime  = requiredTableField "datetime"
+  , values    = requiredTableField "values"
+  , username  = requiredTableField "username"
+  , datasetId = requiredTableField "dataset_id"
   }
 
 all :: Query DataItemColumn
-all = orderBy (asc datetime) (queryTable table)
+all = orderBy (asc datetime) (selectTable table)
 
 by :: Username -> DatasetName -> Query DataItemColumn
 by un dsn = proc () -> do
   ds <- Dataset.by un dsn -< ()
   di <- all -< ()
-  restrict -< username di .== constant un .&& datasetId di .== Dataset.id ds
+  restrict -< username di .== toFields un .&& datasetId di .== Dataset.id ds
   returnA -< di
 
 byUser :: Username -> Query DataItemColumn
-byUser un = keepWhen (\di -> username di .== constant un) . all
+byUser un = keepWhen (\di -> username di .== toFields un) . all
 
 queryAll :: MonadIO m => Pg.Connection -> m [DataItem]
-queryAll conn = liftIO $ runQuery conn all
+queryAll conn = liftIO $ runSelect conn all
 
 queryBy :: MonadIO m => Username -> DatasetName -> Pg.Connection -> m [DataItem]
-queryBy un ds conn = liftIO $ runQuery conn (by un ds)
+queryBy un ds conn = liftIO $ runSelect conn (by un ds)
 
 insert :: MonadIO m => Pg.Connection -> [DataItemColumnW] -> m ()
-insert conn dis = liftIO $ void $ runInsertMany conn table dis
+insert conn dis = liftIO $ void $ runInsert_ conn (Insert table dis rCount Nothing)
 
 -- TODO 404 if doesn't exist
 deleteAll :: MonadIO m => Username -> Dataset.DatasetName -> Pg.Connection -> m ()
@@ -126,6 +126,6 @@ deleteAll un dsn conn = liftIO $ void $ Pg.withTransaction conn $ do
   forM_ mDs $ \ds ->
     runDelete_ conn Delete
       { dTable = table
-      , dWhere = \fs -> username fs .== constant un .&& datasetId fs .== constant (Dataset.id ds)
+      , dWhere = \fs -> username fs .== toFields un .&& datasetId fs .== toFields (Dataset.id ds)
       , dReturning = rCount
       }

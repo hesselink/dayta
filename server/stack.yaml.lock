@@ -5,29 +5,29 @@
 
 packages:
 - completed:
-    hackage: servant-0.17@sha256:e78734cb6b75c5d1e52e8f5e16bc3f557154a580bbde4932a7e1a6a90da7eb04,5029
+    hackage: servant-0.19@sha256:9aef91c5c89a3ad05c3b0037811e5f0f69db85b3d70be39409322d22e5be326c,5560
     pantry-tree:
-      size: 2392
-      sha256: 36561a606c35393386aa48b7cc2407fa4013aba62a19d69f004ec9c2010209aa
+      size: 2802
+      sha256: d10f4e501043f15012a7132dfd452d7eb3f6346930b2edeeb4d4ea30401ba2e8
   original:
-    hackage: servant-0.17
+    hackage: servant-0.19
 - completed:
-    hackage: servant-server-0.17@sha256:1a5adf564f0b703535eb733f249b282ef2ca7b587a303c357b549fb88e7a6dcd,5388
+    hackage: servant-server-0.19@sha256:4d54e998602264149b3df705a770811a15b18343c2b0a6b0e7d25d9282f93409,5691
     pantry-tree:
-      size: 2460
-      sha256: ea65ba54acb4362efedbfa7db616a51023579a6c83f18ab6d2ea6a84dea56021
+      size: 2614
+      sha256: db2dfcaa52403851f1d77bfde6afced09aa65de5ac91452e5fdf4dc041d3e412
   original:
-    hackage: servant-server-0.17
+    hackage: servant-server-0.19
 - completed:
-    hackage: postgresql-simple-migration-0.1.15.0@sha256:0e24e96908430f5caf9c1c1d9ca7c5c108e4e0409a255e2cbd77e8cd252dbb02,3879
+    hackage: postgresql-simple-migration-0.1.15.0@sha256:123d8f62b0e300aede37e2d6dacc81b9468cb68dc5c3f52fe807085992280aa8,3969
     pantry-tree:
       size: 766
-      sha256: c2843bfe43b804992bc913f33ec6b2c6cb0fc99c6d931b6ff85894e8aef9a99e
+      sha256: 186c759339e91c18b51879a5795f6cf8db2639001eb6b0e7c017d90e5dfa6ab2
   original:
-    hackage: postgresql-simple-migration-0.1.15.0
+    hackage: postgresql-simple-migration-0.1.15.0@sha256:123d8f62b0e300aede37e2d6dacc81b9468cb68dc5c3f52fe807085992280aa8,3969
 snapshots:
 - completed:
-    size: 496112
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/15/13.yaml
-    sha256: 75a1a0f870e1876898b117b0e443f911b3fa2985bfabb53158c81ab5765beda5
-  original: lts-15.13
+    size: 590102
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/27.yaml
+    sha256: 79a786674930a89301b0e908fad2822a48882f3d01486117693c377b8edffdbe
+  original: lts-18.27

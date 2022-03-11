@@ -15,11 +15,11 @@ type Username = Username' Text
 
 makeAdaptorAndInstance "pUsername" ''Username'
 
-instance Default Constant Username (Column Username) where
-  def = dimap unUsername unsafeCoerceColumn (def :: Constant Text (Column PGText))
+instance Default ToFields Username (Column Username) where
+  def = dimap unUsername unsafeCoerceColumn (def :: ToFields Text (Column PGText))
 
 instance Pg.FromField Username where
   fromField fName mData = Username <$> Pg.fromField fName mData
 
-instance QueryRunnerColumnDefault Username Username where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField Username Username where
+  defaultFromField = fromPGSFromField

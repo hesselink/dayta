@@ -37,28 +37,28 @@ type Id = Id' Int64
 
 makeAdaptorAndInstance "pId" ''Id'
 
-instance Default Constant Id (Column Id) where
-  def = dimap unId unsafeCoerceColumn (def :: Constant Int64 (Column PGInt8))
+instance Default ToFields Id (Column Id) where
+  def = dimap unId unsafeCoerceColumn (def :: ToFields Int64 (Column PGInt8))
 
 instance Pg.FromField Id where
   fromField fName mData = Id <$> Pg.fromField fName mData
 
-instance QueryRunnerColumnDefault Id Id where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField Id Id where
+  defaultFromField = fromPGSFromField
 
 newtype FieldName' a = FieldName { unFieldName :: a } deriving (Show, Eq, Ord)
 type FieldName = FieldName' Text
 
 makeAdaptorAndInstance "pFieldName" ''FieldName'
 
-instance Default Constant FieldName (Column FieldName) where
-  def = dimap unFieldName unsafeCoerceColumn (def :: Constant Text (Column PGText))
+instance Default ToFields FieldName (Column FieldName) where
+  def = dimap unFieldName unsafeCoerceColumn (def :: ToFields Text (Column PGText))
 
 instance Pg.FromField FieldName where
   fromField fName mData = FieldName <$> Pg.fromField fName mData
 
-instance QueryRunnerColumnDefault FieldName FieldName where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField FieldName FieldName where
+  defaultFromField = fromPGSFromField
 
 data Field' a b c = Field
   { id        :: a
@@ -74,19 +74,19 @@ type FieldColumnW = Field' (Maybe (Column Id)) (Column Dataset.Id) (Column Field
 
 table :: Table FieldColumnW FieldColumn
 table = Table "dataset_field" $ pField Field
-  { id        = optional "id"
-  , datasetId = required "dataset_id"
-  , name      = required "field_name"
+  { id        = optionalTableField "id"
+  , datasetId = requiredTableField "dataset_id"
+  , name      = requiredTableField "field_name"
   }
 
 all :: Query FieldColumn
-all = queryTable table
+all = selectTable table
 
 byDatasetId :: Dataset.Id -> Query FieldColumn
-byDatasetId ds = keepWhen (\t -> datasetId t .== constant ds) . all
+byDatasetId ds = keepWhen (\t -> datasetId t .== toFields ds) . all
 
 getByDatasetId :: MonadIO m => Dataset.Id -> Pg.Connection -> m [Field]
-getByDatasetId dsId conn = liftIO $ runQuery conn (byDatasetId dsId)
+getByDatasetId dsId conn = liftIO $ runSelect conn (byDatasetId dsId)
 
 insert :: MonadIO m => [FieldColumnW] -> Pg.Connection -> m ()
 insert fs conn = void $ liftIO (runInsert_ conn (Insert table fs rCount Nothing))
@@ -95,6 +95,6 @@ deleteAll :: MonadIO m => Dataset.Id -> Pg.Connection -> m ()
 deleteAll dsId conn = void $ liftIO $
     runDelete_ conn Delete
       { dTable = table
-      , dWhere = \fs -> datasetId fs .== constant dsId
+      , dWhere = \fs -> datasetId fs .== toFields dsId
       , dReturning = rCount
       }

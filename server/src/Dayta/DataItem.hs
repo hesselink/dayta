@@ -22,10 +22,10 @@ import qualified Dayta.Db.Username as Db
 toDb :: Username -> Db.Dataset.Id -> DataItem -> Db.DataItemColumnW
 toDb username datasetId di = Db.DataItem
   { Db.id = Nothing
-  , Db.datetime = O.constant (datetime di)
-  , Db.values = O.constant (Json.object ["value" .= value di])
-  , Db.username = O.constant username
-  , Db.datasetId = O.constant datasetId
+  , Db.datetime = O.toFields (datetime di)
+  , Db.values = O.toFields (Json.object ["value" .= value di])
+  , Db.username = O.toFields username
+  , Db.datasetId = O.toFields datasetId
   }
 
 fromDb :: Db.DataItem -> DataItem

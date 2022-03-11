@@ -43,14 +43,14 @@ type DatasetName = DatasetName' Text
 
 makeAdaptorAndInstance "pDatasetName" ''DatasetName'
 
-instance Default Constant DatasetName (Column DatasetName) where
-  def = dimap unDatasetName unsafeCoerceColumn (def :: Constant Text (Column PGText))
+instance Default ToFields DatasetName (Column DatasetName) where
+  def = dimap unDatasetName unsafeCoerceColumn (def :: ToFields Text (Column PGText))
 
 instance Pg.FromField DatasetName where
   fromField fName mData = DatasetName <$> Pg.fromField fName mData
 
-instance QueryRunnerColumnDefault DatasetName DatasetName where
-  queryRunnerColumnDefault = fieldQueryRunnerColumn
+instance DefaultFromField DatasetName DatasetName where
+  defaultFromField = fromPGSFromField
 
 data Dataset' a b c = Dataset
   { id       :: a
@@ -66,26 +66,26 @@ type DatasetColumnW = Dataset' (Maybe (Column Id)) (Column DatasetName) (Column 
 
 table :: Table DatasetColumnW DatasetColumn
 table = Table "dataset" $ pDataset Dataset
-  { id       = optional "id"
-  , name     = required "name"
-  , username = required "username"
+  { id       = optionalTableField "id"
+  , name     = requiredTableField "name"
+  , username = requiredTableField "username"
   }
 
 all :: Query DatasetColumn
-all = queryTable table
+all = selectTable table
 
 byUser :: Username -> Query DatasetColumn
-byUser un = keepWhen (\t -> username t .== constant un) . all
+byUser un = keepWhen (\t -> username t .== toFields un) . all
 
 by :: Username -> DatasetName -> Query DatasetColumn
-by un dn = keepWhen (\t -> name t .== constant dn) . byUser un
+by un dn = keepWhen (\t -> name t .== toFields dn) . byUser un
 
 
 list :: MonadIO m => Username -> Pg.Connection -> m [DatasetName]
-list un conn = liftIO $ runQuery conn $ fmap name (byUser un)
+list un conn = liftIO $ runSelect conn $ fmap name (byUser un)
 
 get :: MonadIO m => Username -> DatasetName -> Pg.Connection -> m (Maybe Dataset)
-get un dn conn = listToMaybe <$> liftIO (runQuery conn $ by un dn)
+get un dn conn = listToMaybe <$> liftIO (runSelect conn $ by un dn)
 
 getWithFields :: MonadIO m => Username -> DatasetName -> Pg.Connection -> m (Maybe (Dataset, [Field]))
 getWithFields un dn conn = liftIO $ Pg.withTransaction conn $ do
@@ -96,6 +96,6 @@ insert :: MonadIO m => DatasetColumnW -> Pg.Connection ->  m Id
 insert ds conn = head <$> liftIO (runInsert_ conn (Insert table [ds] (rReturning id) Nothing))
 
 update :: MonadIO m => Id -> DatasetColumnW -> Pg.Connection -> m ()
-update dsId ds conn = void $ liftIO (runUpdate_ conn (Update table (`merge` ds) (\t -> id t .== constant dsId) rCount))
+update dsId ds conn = void $ liftIO (runUpdate_ conn (Update table (`merge` ds) (\t -> id t .== toFields dsId) rCount))
   where
     merge defs writes = writes { id = Just (id defs) } -- TODO generalize?

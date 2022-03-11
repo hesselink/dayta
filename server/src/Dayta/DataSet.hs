@@ -49,14 +49,14 @@ toDb :: Username -> Dataset -> (Db.DatasetColumnW, Db.Id -> [Db.FieldColumnW])
 toDb un ds =
   ( Db.Dataset
       { Db.id = Nothing
-      , Db.username = Opaleye.constant . Db.Username . unUsername $ un
-      , Db.name = Opaleye.constant . Db.DatasetName . unDatasetName . name $ ds
+      , Db.username = Opaleye.toFields . Db.Username . unUsername $ un
+      , Db.name = Opaleye.toFields . Db.DatasetName . unDatasetName . name $ ds
       }
   , \dsId -> map (\f ->
            Db.Field
              { Db.Field.id = Nothing
-             , Db.Field.datasetId = Opaleye.constant dsId
-             , Db.Field.name = Opaleye.constant . Db.Field.FieldName . unFieldName . Field.name $ f
+             , Db.Field.datasetId = Opaleye.toFields dsId
+             , Db.Field.name = Opaleye.toFields . Db.Field.FieldName . unFieldName . Field.name $ f
              }
         )
       (fields ds)
