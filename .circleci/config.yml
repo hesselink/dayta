@@ -20,6 +20,9 @@ jobs:
             tar xf node-v16.14.0-linux-x64.tar.xz
             echo 'export PATH=$HOME/node-v16.14.0-linux-x64/bin:$PATH' >> $BASH_ENV
       - run:
+          name: Install libpq
+          command: apt-get install -y libpq-dev
+      - run:
           name: Install Client Dependencies
           command: cd client && npm install
       - run:
