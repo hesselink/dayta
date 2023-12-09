@@ -21,6 +21,7 @@ apiServer' username
   :<|> (\dataset ->
          (  DataItem.list username dataset
        :<|> DataItem.create username dataset
+       :<|> DataItem.delete username dataset
          )
      :<|> DataSet.upload username dataset
      :<|> DataSet.delete username dataset

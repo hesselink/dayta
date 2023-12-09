@@ -22,6 +22,7 @@ module Dayta.Db.DataItem
 , queryAll
 , queryBy
 , insert
+, delete
 , deleteAll
 ) where
 
@@ -120,6 +121,19 @@ queryBy un ds conn = liftIO $ runSelect conn (by un ds)
 
 insert :: MonadIO m => Pg.Connection -> [DataItemColumnW] -> m ()
 insert conn dis = liftIO $ void $ runInsert_ conn (Insert table dis rCount Nothing)
+
+delete :: MonadIO m => Username -> DatasetName -> UTCTime -> Json.Value -> Pg.Connection -> m ()
+delete un dsn t v conn = liftIO $ void $ Pg.withTransaction conn $ do
+  mDs <- Dataset.get un dsn conn
+  forM_ mDs $ \ds ->
+    runDelete_ conn Delete
+      { dTable = table
+      , dWhere = \fs ->  username fs .== toFields un
+                     .&& datasetId fs .== toFields (Dataset.id ds)
+                     .&& datetime fs .== toFields t
+                     .&& values fs .== toFields v
+      , dReturning = rCount
+      }
 
 -- TODO 404 if doesn't exist
 deleteAll :: MonadIO m => Username -> Dataset.DatasetName -> Pg.Connection -> m ()

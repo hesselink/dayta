@@ -15,7 +15,10 @@ type Api = "user" :> Capture "username" Username
              :> "dataset" :>
                ( Get '[JSON] [DatasetName]
              :<|> Capture "dataset" DatasetName
-               :> (  "item" :> (Get '[JSON] [DataItem] :<|> ReqBody '[JSON] DataItem  :> Post '[JSON] ())
+               :> (  "item" :> (Get '[JSON] [DataItem]
+                             :<|> ReqBody '[JSON] DataItem :> Post '[JSON] ()
+                             :<|> ReqBody '[JSON] DataItem :> Delete '[JSON] ()
+                             )
                 :<|> ReqBody '[OctetStream] ByteString :> Post '[JSON] ()
                 :<|> Delete '[JSON] ()
                 :<|> Get '[JSON] Dataset

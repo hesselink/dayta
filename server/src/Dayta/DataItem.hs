@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Dayta.DataItem (create, createMany, list, deleteAll) where
+module Dayta.DataItem (create, createMany, list, delete, deleteAll) where
 
 import Control.Monad (forM_)
 import Control.Monad.IO.Class (liftIO)
@@ -22,10 +22,13 @@ toDb :: Username -> Db.Dataset.Id -> DataItem -> Db.DataItemColumnW
 toDb username datasetId di = Db.DataItem
   { Db.id = Nothing
   , Db.datetime = O.toFields (datetime di)
-  , Db.values = O.toFields (Json.object ["value" .= value di])
+  , Db.values = O.toFields (mkValueObject (value di))
   , Db.username = O.toFields username
   , Db.datasetId = O.toFields datasetId
   }
+
+mkValueObject :: Double -> Json.Value
+mkValueObject v = Json.object ["value" .= v]
 
 fromDb :: Db.DataItem -> DataItem
 fromDb di = DataItem
@@ -60,6 +63,11 @@ list :: Username -> DatasetName -> Dayta [DataItem]
 list username dataset = withConnection $ \conn -> do
   fmap fromDb <$>
     Db.queryBy (Db.Username . unUsername $ username) (Db.Dataset.DatasetName . unDatasetName $ dataset) conn
+
+delete :: Username -> DatasetName -> DataItem -> Dayta ()
+delete username dataset di = withConnection $
+  Db.delete (Db.Username . unUsername $ username) (Db.Dataset.DatasetName . unDatasetName $ dataset)
+    (datetime di) (mkValueObject (value di))
 
 deleteAll :: Username -> DatasetName -> Dayta ()
 deleteAll username dataset = withConnection $

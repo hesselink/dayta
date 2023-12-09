@@ -1,4 +1,4 @@
-module Dayta.Handler.DataItem (list, create) where
+module Dayta.Handler.DataItem (list, create, delete) where
 
 import qualified Dayta.DataItem as Domain
 import Dayta.Types.Dayta (Dayta)
@@ -14,3 +14,6 @@ list = Domain.list
 create :: Username -> DatasetName -> DataItem -> Dayta ()
 create username dataset dataitem = traceShow dataitem $
   Domain.create username dataset dataitem
+
+delete :: Username -> DatasetName -> DataItem -> Dayta ()
+delete = Domain.delete
