@@ -1,7 +1,5 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
-{-# LANGUAGE DeriveGeneric
-  , StandaloneDeriving
-  #-}
+{-# LANGUAGE DeriveGeneric #-}
 module Config (Config (..), get) where
 
 import Data.Aeson (FromJSON)
@@ -38,9 +36,7 @@ get :: FilePath -> IO Config
 get cfgFile = do
   result <- Yaml.decodeFileEither cfgFile
   case result of
-    Right config -> do
-      def <- return defaultConfig
-      return (mergeWithDefault def config)
+    Right config -> return (mergeWithDefault defaultConfig config)
     Left (Yaml.AesonException e) -> print e >> return defaultConfig
     Left e -> print e >> return defaultConfig
 
