@@ -8,7 +8,7 @@ module Dayta.Types.Dayta (Dayta, daytaToHandler, withConnection) where
 import Control.Monad.Base (MonadBase)
 import Control.Monad.Reader (ReaderT, runReaderT, MonadReader, MonadIO, asks)
 import Control.Monad.Except (MonadError)
-import Control.Monad.Trans.Control (MonadBaseControl (..))
+import Control.Monad.Trans.Control (MonadBaseControl (..), control)
 import Servant (Handler, ServerError)
 import Data.Pool (withResource)
 import qualified Database.PostgreSQL.Simple as Db
@@ -32,4 +32,4 @@ daytaToHandler = runDayta
 withConnection :: (Db.Connection -> Dayta a) -> Dayta a
 withConnection act = do
   pool <- asks Dayta.dbConnectionPool
-  withResource pool act
+  control $ \run -> withResource pool $ run . act

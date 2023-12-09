@@ -29,12 +29,14 @@ import Data.Profunctor (dimap)
 import Data.Profunctor.Product.Default (Default (..))
 import Data.Profunctor.Product.TH (makeAdaptorAndInstance)
 import Data.Text (Text)
-import Opaleye hiding (table, Field)
+import Opaleye hiding (table, Field, keepWhen)
+import qualified Opaleye as Db
 import qualified Database.PostgreSQL.Simple as Pg
 import qualified Database.PostgreSQL.Simple.FromField as Pg
 
 import Dayta.Db.DataSet.Id
 import Dayta.Db.Username (Username)
+import Dayta.Db.Util
 import Dayta.Db.Field (Field)
 import qualified Dayta.Db.Field as Field
 
@@ -43,8 +45,8 @@ type DatasetName = DatasetName' Text
 
 makeAdaptorAndInstance "pDatasetName" ''DatasetName'
 
-instance Default ToFields DatasetName (Column DatasetName) where
-  def = dimap unDatasetName unsafeCoerceColumn (def :: ToFields Text (Column PGText))
+instance Default ToFields DatasetName (Db.Field DatasetName) where
+  def = dimap unDatasetName unsafeCoerceField (def :: ToFields Text (Db.Field SqlText))
 
 instance Pg.FromField DatasetName where
   fromField fName mData = DatasetName <$> Pg.fromField fName mData
@@ -61,23 +63,23 @@ data Dataset' a b c = Dataset
 makeAdaptorAndInstance "pDataset" ''Dataset'
 
 type Dataset = Dataset' Id DatasetName Username
-type DatasetColumn = Dataset' (Column Id) (Column DatasetName) (Column Username)
-type DatasetColumnW = Dataset' (Maybe (Column Id)) (Column DatasetName) (Column Username)
+type DatasetColumn = Dataset' (Db.Field Id) (Db.Field DatasetName) (Db.Field Username)
+type DatasetColumnW = Dataset' (Maybe (Db.Field Id)) (Db.Field DatasetName) (Db.Field Username)
 
 table :: Table DatasetColumnW DatasetColumn
-table = Table "dataset" $ pDataset Dataset
+table = Db.table "dataset" $ pDataset Dataset
   { id       = optionalTableField "id"
   , name     = requiredTableField "name"
   , username = requiredTableField "username"
   }
 
-all :: Query DatasetColumn
+all :: Select DatasetColumn
 all = selectTable table
 
-byUser :: Username -> Query DatasetColumn
+byUser :: Username -> Select DatasetColumn
 byUser un = keepWhen (\t -> username t .== toFields un) . all
 
-by :: Username -> DatasetName -> Query DatasetColumn
+by :: Username -> DatasetName -> Select DatasetColumn
 by un dn = keepWhen (\t -> name t .== toFields dn) . byUser un
 
 

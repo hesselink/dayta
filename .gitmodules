@@ -1,0 +1,3 @@
+[submodule "3rd/postgresql-simple-migration"]
+	path = 3rd/postgresql-simple-migration
+	url = git@github.com:hesselink/postgresql-simple-migration.git

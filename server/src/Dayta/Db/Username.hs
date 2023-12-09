@@ -15,8 +15,8 @@ type Username = Username' Text
 
 makeAdaptorAndInstance "pUsername" ''Username'
 
-instance Default ToFields Username (Column Username) where
-  def = dimap unUsername unsafeCoerceColumn (def :: ToFields Text (Column PGText))
+instance Default ToFields Username (Field Username) where
+  def = dimap unUsername unsafeCoerceField (def :: ToFields Text (Field SqlText))
 
 instance Pg.FromField Username where
   fromField fName mData = Username <$> Pg.fromField fName mData

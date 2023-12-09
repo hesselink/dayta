@@ -26,19 +26,21 @@ import Data.Profunctor (dimap)
 import Data.Profunctor.Product.Default (Default (..))
 import Data.Profunctor.Product.TH (makeAdaptorAndInstance)
 import Data.Text (Text)
-import Opaleye hiding (table, Field)
+import Opaleye hiding (table, Field, keepWhen)
+import qualified Opaleye as Db
 import qualified Database.PostgreSQL.Simple as Pg
 import qualified Database.PostgreSQL.Simple.FromField as Pg
 
 import qualified Dayta.Db.DataSet.Id as Dataset
+import Dayta.Db.Util
 
 newtype Id' a = Id { unId :: a } deriving (Show, Eq, Ord)
 type Id = Id' Int64
 
 makeAdaptorAndInstance "pId" ''Id'
 
-instance Default ToFields Id (Column Id) where
-  def = dimap unId unsafeCoerceColumn (def :: ToFields Int64 (Column PGInt8))
+instance Default ToFields Id (Db.Field Id) where
+  def = dimap unId unsafeCoerceField (def :: ToFields Int64 (Column SqlInt8))
 
 instance Pg.FromField Id where
   fromField fName mData = Id <$> Pg.fromField fName mData
@@ -51,8 +53,8 @@ type FieldName = FieldName' Text
 
 makeAdaptorAndInstance "pFieldName" ''FieldName'
 
-instance Default ToFields FieldName (Column FieldName) where
-  def = dimap unFieldName unsafeCoerceColumn (def :: ToFields Text (Column PGText))
+instance Default ToFields FieldName (Db.Field FieldName) where
+  def = dimap unFieldName unsafeCoerceField (def :: ToFields Text (Db.Field SqlText))
 
 instance Pg.FromField FieldName where
   fromField fName mData = FieldName <$> Pg.fromField fName mData
@@ -69,20 +71,20 @@ data Field' a b c = Field
 makeAdaptorAndInstance "pField" ''Field'
 
 type Field = Field' Id Dataset.Id FieldName
-type FieldColumn = Field' (Column Id) (Column Dataset.Id) (Column FieldName)
-type FieldColumnW = Field' (Maybe (Column Id)) (Column Dataset.Id) (Column FieldName)
+type FieldColumn = Field' (Db.Field Id) (Db.Field Dataset.Id) (Db.Field FieldName)
+type FieldColumnW = Field' (Maybe (Db.Field Id)) (Db.Field Dataset.Id) (Db.Field FieldName)
 
 table :: Table FieldColumnW FieldColumn
-table = Table "dataset_field" $ pField Field
+table = Db.table "dataset_field" $ pField Field
   { id        = optionalTableField "id"
   , datasetId = requiredTableField "dataset_id"
   , name      = requiredTableField "field_name"
   }
 
-all :: Query FieldColumn
+all :: Select FieldColumn
 all = selectTable table
 
-byDatasetId :: Dataset.Id -> Query FieldColumn
+byDatasetId :: Dataset.Id -> Select FieldColumn
 byDatasetId ds = keepWhen (\t -> datasetId t .== toFields ds) . all
 
 getByDatasetId :: MonadIO m => Dataset.Id -> Pg.Connection -> m [Field]

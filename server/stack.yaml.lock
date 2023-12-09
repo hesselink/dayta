@@ -3,31 +3,10 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages:
-- completed:
-    hackage: servant-0.19@sha256:9aef91c5c89a3ad05c3b0037811e5f0f69db85b3d70be39409322d22e5be326c,5560
-    pantry-tree:
-      size: 2802
-      sha256: d10f4e501043f15012a7132dfd452d7eb3f6346930b2edeeb4d4ea30401ba2e8
-  original:
-    hackage: servant-0.19
-- completed:
-    hackage: servant-server-0.19@sha256:4d54e998602264149b3df705a770811a15b18343c2b0a6b0e7d25d9282f93409,5691
-    pantry-tree:
-      size: 2614
-      sha256: db2dfcaa52403851f1d77bfde6afced09aa65de5ac91452e5fdf4dc041d3e412
-  original:
-    hackage: servant-server-0.19
-- completed:
-    hackage: postgresql-simple-migration-0.1.15.0@sha256:123d8f62b0e300aede37e2d6dacc81b9468cb68dc5c3f52fe807085992280aa8,3969
-    pantry-tree:
-      size: 766
-      sha256: 186c759339e91c18b51879a5795f6cf8db2639001eb6b0e7c017d90e5dfa6ab2
-  original:
-    hackage: postgresql-simple-migration-0.1.15.0@sha256:123d8f62b0e300aede37e2d6dacc81b9468cb68dc5c3f52fe807085992280aa8,3969
+packages: []
 snapshots:
 - completed:
-    size: 590102
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/27.yaml
-    sha256: 79a786674930a89301b0e908fad2822a48882f3d01486117693c377b8edffdbe
-  original: lts-18.27
+    sha256: abcc4a65c15c7c2313f1a87f01bfd4d910516e1930b99653eef1d2d006515916
+    size: 640074
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/21/24.yaml
+  original: lts-21.24

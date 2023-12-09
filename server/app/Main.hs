@@ -2,7 +2,7 @@ module Main where
 
 import Data.Proxy (Proxy (Proxy))
 
-import Data.Pool (createPool)
+import Data.Pool (newPool, defaultPoolConfig)
 import qualified Database.PostgreSQL.Simple as Db
 import qualified Network.Wai                as Wai
 import qualified Network.Wai.Handler.Warp   as Warp
@@ -20,7 +20,7 @@ main :: IO ()
 main = do
   cmdOpts <- CmdLine.getOpts
   cfg <- Config.get (CmdLine.configFile cmdOpts)
-  pool <- createPool (Db.connect (Config.dbConnectInfo cfg)) Db.close 1 10 100
+  pool <- newPool (defaultPoolConfig (Db.connect (Config.dbConnectInfo cfg)) Db.close 10 100)
   migrate pool (Config.migrationVerbose_ cfg)
   let st = Dayta.State
         { Dayta.dbConnectionPool = pool

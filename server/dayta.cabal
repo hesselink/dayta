@@ -24,6 +24,7 @@ library
                      , Dayta.Db.DataSet.Id
                      , Dayta.Db.Field
                      , Dayta.Db.Username
+                     , Dayta.Db.Util
                      , Dayta.Db.Migration
                      , Dayta.Handler.DataItem
                      , Dayta.Handler.DataSet

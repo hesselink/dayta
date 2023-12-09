@@ -3,10 +3,9 @@ module Dayta.DataItem (create, createMany, list, deleteAll) where
 
 import Control.Monad (forM_)
 import Control.Monad.IO.Class (liftIO)
-import Data.Aeson ((.=))
-import Data.Maybe (fromMaybe)
+import Data.Aeson ((.=), (.:))
 import qualified Data.Aeson as Json
-import qualified Data.HashMap.Lazy as Map
+import qualified Data.Aeson.Types as Json
 import qualified Database.PostgreSQL.Simple as Pg
 import qualified Opaleye as O
 
@@ -31,14 +30,13 @@ toDb username datasetId di = Db.DataItem
 fromDb :: Db.DataItem -> DataItem
 fromDb di = DataItem
   { datetime = Db.datetime di
-  , value = fromValues (Db.values di)
+  , value = throwOnError $ Json.parse fromValues (Db.values di)
   }
   where
-    fromValues (Json.Object o) =
-      case Json.fromJSON (fromMaybe (error "No value key found in data item.") (Map.lookup "value" o)) of
-        Json.Error str -> error ("Error parsing value field in data item: " ++ str)
-        Json.Success v -> v
-    fromValues _               = error "No json object found when reading data item."
+    fromValues :: Json.Value -> Json.Parser Double
+    fromValues = Json.withObject "No json object found when reading data item." $ \o -> o .: "value"
+    throwOnError (Json.Success v) = v
+    throwOnError (Json.Error str) = error ("Error parsing value field in data item: " ++ str)
 
 -- TODO 404 if missing
 create :: Username -> DatasetName -> DataItem -> Dayta ()
